@@ -1,0 +1,4 @@
+/node_modules
+/util/db.js
+pictures.js
+fetchProducts.js
