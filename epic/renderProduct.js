@@ -35,13 +35,15 @@ async function ssr(url, selector, colorNum) {
     await page.goto(url, {waitUntil: 'networkidle0'});
 
     // Crawl options
-    while (currentNum < colorNum){
+    while (currentNum <= colorNum){
         
-        if (currentNum < colorNum) {
-            await Promise.all([
-                page.click('.mtn-component-features-table table tbody tr:nth-child(2) td a:nth-child('+(currentNum+1)+')'),
-                page.waitForNavigation({ waitUntil: 'networkidle0' })
-            ])
+        if (currentNum <= colorNum) {
+            if(colorNum > 0){
+                await Promise.all([
+                    page.click('.mtn-component-features-table table tbody tr:nth-child(2) td a:nth-child('+(currentNum+1)+')'),
+                    page.waitForNavigation({ waitUntil: 'networkidle0' })
+                ])
+            }
             // store content
             data = await page.content();
             // pass each new option for processing
