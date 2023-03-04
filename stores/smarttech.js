@@ -8,9 +8,8 @@ const db = require('../util/db');
 // CONNECT TO DB
 const pool = db.pool;
 
-const url = 'https://www.smartech.com.cy/smartphones/';
-
-crawl(url);
+const url = 'https://www.smartech.com.cy/smartphones/page/';
+crawl(url)
 const bit=1;
 // cryptography required to create sku from title.
 var crypto = require('crypto');
@@ -20,7 +19,10 @@ async function crawl(url){
     let cat = ''
     if(url.includes('mobile-phones'))
         cat = 'phone'
-    const html = await utilFunction.ssr(url, '.next.page-numbers', false, 50, false);
+    var html = ''
+    for(var i=1; i<25; i++){
+        html = html + await utilFunction.ssr(url+i, 'li .next', false, 1, false);
+    }  
     console.timeEnd("RenderTime");
     const $ = cheerio.load(html)
     var products = []
@@ -70,14 +72,14 @@ async function crawl(url){
                 color = str.slice(-1)
 
                 if(!name.includes("pro")){
-                    connection.query("SELECT * FROM apple WHERE MATCH(name, description, color) AGAINST (? IN NATURAL LANGUAGE MODE) AND name LIKE ? AND name LIKE ? AND name LIKE ? AND name LIKE ? AND name NOT LIKE ? AND color LIKE ?", [name, '%'+str[0]+'%', '%'+str[1]+'%', '%'+str[2]+'%', '%'+str[3]+'%', '%pro%', '%'+color+'%'], function(err, result) {
+                    connection.query("SELECT * FROM apple WHERE MATCH(name, description, color) AGAINST (? IN NATURAL LANGUAGE MODE) AND name LIKE ? AND name LIKE ? AND name LIKE ? AND name LIKE ? AND name NOT LIKE ? AND color LIKE ?", [name, '%'+str[0]+'%', '%'+str[1]+'%', '%'+str[2]+'%', '%'+str[3]+'%', '%pro%', '%'+str[str.length-1]+'%'], function(err, result) {
                         if(err) throw(err);
                         id = result[0]
                         cb(null, id);
                     });
                 }
                 else{
-                    connection.query("SELECT * FROM apple WHERE MATCH(name, description, color) AGAINST (? IN NATURAL LANGUAGE MODE) AND name LIKE ? AND name LIKE ? AND name LIKE ? AND name LIKE ? AND name LIKE ? AND color LIKE ?", [name, '%'+str[0]+'%', '%'+str[1]+'%', '%'+str[2]+'%', '%'+str[3]+'%', '%pro%', '%'+color+'%'], function(err, result) {
+                    connection.query("SELECT * FROM apple WHERE MATCH(name, description, color) AGAINST (? IN NATURAL LANGUAGE MODE) AND name LIKE ? AND name LIKE ? AND name LIKE ? AND name LIKE ? AND name LIKE ? AND color LIKE ?", [name, '%'+str[0]+'%', '%'+str[1]+'%', '%'+str[2]+'%', '%'+str[3]+'%', '%pro%', '%'+str[str.length-1]+'%'], function(err, result) {
                         if(err) throw(err);
                         id = result[0]
                         cb(null, id);
